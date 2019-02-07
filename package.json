@@ -1,0 +1,23 @@
+{
+  "name": "frequent-collaborators",
+  "version": "1.0.0",
+  "description": "build frequent collaborators tables using tmdb",
+  "main": "main.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "@types/node": "^10.1.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "4.14.120"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "tmdb"
+  ],
+  "author": "predelnik",
+  "license": "BSD-2-Clause"
+}

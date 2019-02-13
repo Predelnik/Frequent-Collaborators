@@ -64,34 +64,56 @@ function check_director() {
 	execute ("search/person", {"query" : director_name_input})
 		.then ((response:any) => { 
 			let director_id = response.results[0].id;
-			console.log ('Found director name: ' + response.results[0].name);
 			return execute ('person/' + director_id + '/movie_credits', {})
 		})
 		.then ((response:any) => { 
 			let movie_description_set = new MovieSet ();
-			for (let d of response.crew)
+			for (let d of response.crew) {
+				if (d.job != 'Director')
+					continue
 				movie_description_set.add (new MovieDescription (d.id, d.title));
-			return Promise.all (movie_description_set.descriptions.map (movie_description => execute ('movie/' + movie_description.id + '/credits', {"id" : movie_description.id}, {'movie_title' : movie_description.name})));
+			}
+			return Promise.all (movie_description_set.descriptions.map (movie_description => execute ('movie/' + movie_description.id, {"id" : movie_description.id, "append_to_response": "credits"}, {'movie_title' : movie_description.name})));
 		}).then ((result_array:Array<any>)=> {
 			let cast_id_to_movie_descriptions : { [key:number]:MovieSet; } = {};
 			let actor_set = new ActorSet ();
-			console.log (result_array);
+			let movie_set = new MovieSet ();
 			for (let result of result_array) {
-				for (let cast_data of result["cast"]) {
+				/*
+					if (result["revenue"] == 0)
+						continue;
+				*/
+				for (let cast_data of result["credits"]["cast"]) {
 					let cast_id : number = cast_data["id"];
 					if (!(cast_id in cast_id_to_movie_descriptions))
 						cast_id_to_movie_descriptions[cast_id] = new MovieSet ();
 					
 					let movie_id = result["id"]
-					let movie_set = cast_id_to_movie_descriptions[cast_id];
-					movie_set.add (new MovieDescription (movie_id, result["movie_title"]));
+					let actor_movie_set = cast_id_to_movie_descriptions[cast_id];
+					let movie_description = new MovieDescription (movie_id, result["movie_title"]);
+					actor_movie_set.add (movie_description);
 					actor_set.add (new ActorDescription (cast_id, cast_data["name"]));
+					movie_set.add (movie_description);
 				}
 			}
-			actor_set.descriptions.sort ((desc_lhs, desc_rhs : ActorDescription) => cast_id_to_movie_descriptions[desc_rhs.id].descriptions.length - cast_id_to_movie_descriptions[desc_lhs.id].descriptions.length);
+			actor_set.descriptions.sort ((lhs, rhs : ActorDescription) => cast_id_to_movie_descriptions[rhs.id].descriptions.length - cast_id_to_movie_descriptions[lhs.id].descriptions.length);
+			movie_set.descriptions.sort ((lhs, rhs : MovieDescription) => lhs.name.localeCompare (rhs.name));
+			let table_html : string = "<tr><th></th>" + movie_set.descriptions.map ((description : MovieDescription) => "<th>" + description.name + "</th>").join("") + "</tr>";
 			for (let i = 0; i < Math.min (10, actor_set.descriptions.length); ++i) {
-				console.log (actor_set.descriptions[i].name + ' - ' + cast_id_to_movie_descriptions[actor_set.descriptions[i].id].descriptions.map (description => description.name).join (', ') + ' movies');
+				// console.log (actor_set.descriptions[i].name + ' - ' + cast_id_to_movie_descriptions[actor_set.descriptions[i].id].descriptions.map (description => description.name).join (', ') + ' movies');
+				table_html += "<tr>";
+				table_html += "<td>" + actor_set.descriptions[i].name + "</td>";
+				for (let movie_description of movie_set.descriptions)
+				{
+					table_html += "<td>";
+					if (cast_id_to_movie_descriptions[actor_set.descriptions[i].id].id_set.has (movie_description.id))
+						table_html += "&#9745;";
+					table_html += "</td>";
+					
+				}
+				table_html += "</tr>";
 			}
+			document.getElementById('output_table').innerHTML = table_html;
 		}
 		);
 }

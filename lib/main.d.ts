@@ -11,7 +11,8 @@ declare class ActorDescription {
 declare class MovieDescription {
     id: number;
     name: string;
-    constructor(id: number, name: string);
+    release_date: Date;
+    constructor(id: number, name: string, release_date: Date);
 }
 interface IdObjectDescription {
     id: number;

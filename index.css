@@ -1,0 +1,19 @@
+table
+{
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid black;
+    overflow: auto;
+    text-align: center;
+}
+
+td
+{
+    border: 1px solid black;
+}
+
+th
+{
+    border: 1px solid black;
+}

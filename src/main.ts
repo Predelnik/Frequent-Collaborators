@@ -102,19 +102,19 @@ function check_director() {
 			}
 			actor_set.descriptions.sort ((lhs, rhs : ActorDescription) => cast_id_to_movie_descriptions[rhs.id].descriptions.length - cast_id_to_movie_descriptions[lhs.id].descriptions.length);
 			movie_set.descriptions.sort ((lhs, rhs : MovieDescription) => lhs.release_date < rhs.release_date ? -1 : 1);
-			let table_html : string = "<tr><th></th>" + movie_set.descriptions.map ((description : MovieDescription) => "<th>" + description.name + " (" + description.release_date.getFullYear() + ")" + "</th>").join("") + "</tr>";
+			let table_html : string = "<tr><th></th>" + movie_set.descriptions.map ((description : MovieDescription) => "<th>" + description.name + " (" + description.release_date.getFullYear() + ")" + "</th>").join("") + "<th>Total</th></tr>";
 			for (let i = 0; i < Math.min (10, actor_set.descriptions.length); ++i) {
-				// console.log (actor_set.descriptions[i].name + ' - ' + cast_id_to_movie_descriptions[actor_set.descriptions[i].id].descriptions.map (description => description.name).join (', ') + ' movies');
+				let actor_description = actor_set.descriptions[i];
 				table_html += "<tr>";
-				table_html += "<td>" + (i + 1) + '. ' + actor_set.descriptions[i].name + "</td>";
+				table_html += "<td>" + (i + 1) + '. ' + actor_description.name + "</td>";
 				for (let movie_description of movie_set.descriptions)
 				{
 					table_html += "<td>";
-					if (cast_id_to_movie_descriptions[actor_set.descriptions[i].id].id_set.has (movie_description.id))
+					if (cast_id_to_movie_descriptions[actor_description.id].id_set.has (movie_description.id))
 						table_html += "&#10003;";
 					table_html += "</td>";
-					
 				}
+				table_html += "<td>" + cast_id_to_movie_descriptions[actor_description.id].size ()+ "</td>";
 				table_html += "</tr>";
 			}
 			let output_table_html = document.getElementById('output_table');

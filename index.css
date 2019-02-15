@@ -1,7 +1,6 @@
 table
 {
     table-layout: fixed;
-    width: 100%;
     border-collapse: collapse;
     border: 1px solid black;
     overflow: auto;
@@ -11,6 +10,12 @@ table
 td
 {
     border: 1px solid black;
+}
+
+.header
+{
+    font-size: larger;
+    font-weight: bold;
 }
 
 th

@@ -21,6 +21,7 @@ declare class IdObjectSet<T extends IdObjectDescription> {
     id_set: Set<number>;
     descriptions: T[];
     add(description: T): void;
+    size(): number;
 }
 declare class MovieSet extends IdObjectSet<MovieDescription> {
 }

@@ -54,6 +54,9 @@ class IdObjectSet<T extends IdObjectDescription> {
 		this.id_set.add (description.id);
 		this.descriptions.push (description);
 	}
+	size() {
+		return this.descriptions.length;
+	}
 }
 
 class MovieSet extends IdObjectSet<MovieDescription> {}
@@ -62,7 +65,8 @@ class ActorSet extends IdObjectSet<ActorDescription> {}
 function check_director() {
 	let director_name_input = (<HTMLInputElement>document.getElementById('director_name_input')).value;
 	execute ("search/person", {"query" : director_name_input})
-		.then ((response:any) => { 
+		.then ((response:any) => {
+			document.getElementById('director_name').innerHTML = response.results[0].name;
 			let director_id = response.results[0].id;
 			return execute ('person/' + director_id + '/movie_credits', {})
 		})
@@ -102,7 +106,7 @@ function check_director() {
 			for (let i = 0; i < Math.min (10, actor_set.descriptions.length); ++i) {
 				// console.log (actor_set.descriptions[i].name + ' - ' + cast_id_to_movie_descriptions[actor_set.descriptions[i].id].descriptions.map (description => description.name).join (', ') + ' movies');
 				table_html += "<tr>";
-				table_html += "<td>" + actor_set.descriptions[i].name + "</td>";
+				table_html += "<td>" + (i + 1) + '. ' + actor_set.descriptions[i].name + "</td>";
 				for (let movie_description of movie_set.descriptions)
 				{
 					table_html += "<td>";
@@ -113,7 +117,9 @@ function check_director() {
 				}
 				table_html += "</tr>";
 			}
-			document.getElementById('output_table').innerHTML = table_html;
+			let output_table_html = document.getElementById('output_table');
+			output_table_html.innerHTML = table_html;
+			output_table_html.style.width = movie_set.size() * 100 + 'px';
 		}
 		);
 }

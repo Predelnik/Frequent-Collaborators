@@ -73,8 +73,10 @@ function check_director() {
 		.then ((response:any) => { 
 			let movie_description_set = new MovieSet ();
 			for (let d of response.crew) {
+				if (d.release_date == '')
+					continue;
 				if (d.job != 'Director')
-					continue
+					continue;
 				movie_description_set.add (new MovieDescription (d.id, d.title, new Date (d.release_date)));
 			}
 			return Promise.all (movie_description_set.descriptions.map (movie_description => execute ('movie/' + movie_description.id, {"id" : movie_description.id, "append_to_response": "credits"}, {'movie_description' : movie_description})));
@@ -102,11 +104,12 @@ function check_director() {
 			}
 			actor_set.descriptions.sort ((lhs, rhs : ActorDescription) => cast_id_to_movie_descriptions[rhs.id].descriptions.length - cast_id_to_movie_descriptions[lhs.id].descriptions.length);
 			movie_set.descriptions.sort ((lhs, rhs : MovieDescription) => lhs.release_date < rhs.release_date ? -1 : 1);
-			let table_html : string = "<tr><th></th>" + movie_set.descriptions.map ((description : MovieDescription) => "<th>" + description.name + " (" + description.release_date.getFullYear() + ")" + "</th>").join("") + "<th>Total</th></tr>";
-			for (let i = 0; i < Math.min (10, actor_set.descriptions.length); ++i) {
+			let table_html : string = "<tr><th class=\"table-vertical-header\"></th>" + movie_set.descriptions.map ((description : MovieDescription) => "<th>" + description.name + " (" + description.release_date.getFullYear() + ")" + "</th>").join("") + "<th>Total</th></tr>";
+			let actor_count = Math.min (10, actor_set.descriptions.length);
+			for (let i = 0; i < actor_count; ++i) {
 				let actor_description = actor_set.descriptions[i];
 				table_html += "<tr>";
-				table_html += "<td>" + (i + 1) + '. ' + actor_description.name + "</td>";
+				table_html += "<td class=\"table-vertical-header\">" + (i + 1) + '. ' + actor_description.name + "</td>";
 				for (let movie_description of movie_set.descriptions)
 				{
 					table_html += "<td>";
@@ -119,7 +122,7 @@ function check_director() {
 			}
 			let output_table_html = document.getElementById('output_table');
 			output_table_html.innerHTML = table_html;
-			output_table_html.style.width = movie_set.size() * 100 + 'px';
+			output_table_html.style.width = movie_set.size() * 120 + 'px';
 		}
 		);
 }

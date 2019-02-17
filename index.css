@@ -10,6 +10,13 @@ table
 td
 {
     border: 1px solid black;
+    height: 40px;
+}
+
+.table-vertical-header
+{
+  text-align: left;
+  width: 150px;
 }
 
 .header

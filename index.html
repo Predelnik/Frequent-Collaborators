@@ -6,6 +6,10 @@
     </head>
     <body>
          <p>Director Name: <input id="director_name_input"></input><button onclick="check_director()">Generate</button></p>
+         <details>
+            <summary>Options</summary>
+            <p>Number of collaborators to show:<input id="top_n_edit" value="10" type="number"></input></p>
+        </details>
          <p id="director_name" class="header"></p>
          <p><table id="output_table"></table></p>
     </body>

@@ -10,9 +10,10 @@ function sleep(ms) {
 }
 
 function execute(request_url : string, args : any, additional_data : any = {}, retry_count = 3) {
+	let language = (document.getElementById ('language_edit') as HTMLInputElement).value;
 	return new Promise((resolve, reject) => {
 		var request = new XMLHttpRequest();
-		request.open('GET', base_uri + request_url + '?api_key=' + api_key + (Object.keys(args).length === 0 ? '' : '&') + 
+		request.open('GET', base_uri + request_url + '?api_key=' + api_key + '&language=' + language + '&' + (Object.keys(args).length === 0 ? '' : '&') + 
 			Object.keys(args).map(k => {
 				return encodeURIComponent(k) + "=" + encodeURIComponent(args[k]);
 			}).join('&') , true);

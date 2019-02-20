@@ -13,6 +13,22 @@ td
     height: 40px;
 }
 
+label
+{
+    float: left;
+    width: 250px;
+}
+
+.long-control
+{
+    width: 250px;
+}
+
+div, summary
+{
+    margin-bottom: 10px;
+}
+
 .table-vertical-header
 {
   text-align: left;

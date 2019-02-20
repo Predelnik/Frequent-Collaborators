@@ -1,17 +1,17 @@
-declare let api_key: string;
-declare let base_uri: string;
+declare const api_key = "7a92a35fa5474d448234162762968104";
+declare const base_uri = "https://api.themoviedb.org/3/";
 declare function report_error(error_str: string): void;
 declare function sleep(ms: any): Promise<{}>;
 declare function execute(request_url: string, args: any, additional_data?: any, retry_count?: number): Promise<{}>;
 declare class ActorDescription {
-    id: number;
-    name: string;
+    readonly id: number;
+    readonly name: string;
     constructor(id: number, name: string);
 }
 declare class MovieDescription {
-    id: number;
-    name: string;
-    release_date: Date;
+    readonly id: number;
+    readonly name: string;
+    readonly release_date: Date;
     constructor(id: number, name: string, release_date: Date);
 }
 interface IdObjectDescription {

@@ -19,7 +19,8 @@ function execute(request_url : string, args : any, additional_data : any = {}, r
 			}).join('&') , true);
 		request.onload = function () { 
 				if (request.status == 429 && retry_count > 0) {
-					return sleep (20000).then (() => execute (request_url, args, additional_data, retry_count - 1))
+					console.log ('Retry scheduled');
+					return sleep (10000).then (() => execute (request_url, args, additional_data, retry_count - 1))
 				}
 				var data = JSON.parse(this.response);
 				if (request.status >= 200 && request.status < 400) {
@@ -64,10 +65,17 @@ class MovieSet extends IdObjectSet<MovieDescription> {}
 class ActorSet extends IdObjectSet<ActorDescription> {}
 
 function check_director() {
+	const loading_bar_html = document.getElementById('loading_bar');
+	loading_bar_html.innerHTML = '<img src="img/ajax-loader.gif"></img>';
 	const director_name_input = (<HTMLInputElement>document.getElementById('director_name_input')).value;
 	execute ("search/person", {"query" : director_name_input})
 		.then ((response:any) => {
-			document.getElementById('director_name').innerHTML = response.results[0].name;
+			const director_name_html = document.getElementById('director_name');
+			if (response.results.length == 0) {
+				director_name_html.innerHTML = 'Person Not Found';
+				throw new Error ('Person not Found');
+			}
+			director_name_html.innerHTML = response.results[0].name;
 			const director_id = response.results[0].id;
 			return execute ('person/' + director_id + '/movie_credits', {}, {"director_id" : director_id})
 		})
@@ -126,5 +134,10 @@ function check_director() {
 			output_table_html.innerHTML = table_html;
 			output_table_html.style.width = movie_set.size() * 120 + 'px';
 		}
-		);
+		)
+		.catch (error => { console.log(error.name, error.message); })
+		.finally (()=>{
+			const loading_bar_html = document.getElementById('loading_bar');
+			loading_bar_html.innerHTML = '';
+		});
 }

@@ -5,8 +5,11 @@ function report_error(error_str: string) {
 	document.getElementById('output_table').innerHTML = 'Error:' + error_str
 }
 
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+function sleep(ms : number) {
+   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+class ApiLimitReached extends Error {
 }
 
 function execute(request_url : string, args : any, additional_data : any = {}, retry_count = 3) {
@@ -19,8 +22,7 @@ function execute(request_url : string, args : any, additional_data : any = {}, r
 			}).join('&') , true);
 		request.onload = function () { 
 				if (request.status == 429 && retry_count > 0) {
-					console.log ('Retry scheduled');
-					return sleep (10000).then (() => execute (request_url, args, additional_data, retry_count - 1))
+					return reject (new ApiLimitReached ());
 				}
 				var data = JSON.parse(this.response);
 				if (request.status >= 200 && request.status < 400) {
@@ -31,6 +33,13 @@ function execute(request_url : string, args : any, additional_data : any = {}, r
 				}
 			}
 		request.send();
+	}).catch ((error : ApiLimitReached) => {
+		console.log ('Retrying')
+		const sleep_time = 10000;
+		if (retry_count > 0)
+			return sleep (sleep_time).then (()=>execute (request_url, args, additional_data, retry_count - 1))
+		else
+			throw error;
 	});
 }
 
@@ -65,6 +74,8 @@ class MovieSet extends IdObjectSet<MovieDescription> {}
 class ActorSet extends IdObjectSet<ActorDescription> {}
 
 function check_director() {
+	const output_table_html = document.getElementById('output_table');
+	output_table_html.innerHTML = '';
 	const loading_bar_html = document.getElementById('loading_bar');
 	loading_bar_html.innerHTML = '<img src="img/ajax-loader.gif"></img>';
 	const director_name_input = (<HTMLInputElement>document.getElementById('director_name_input')).value;
@@ -132,10 +143,11 @@ function check_director() {
 			}
 			const output_table_html = document.getElementById('output_table');
 			output_table_html.innerHTML = table_html;
-			output_table_html.style.width = movie_set.size() * 120 + 'px';
+			const section_size = 120;
+			output_table_html.style.width = movie_set.size() * section_size + 'px';
 		}
 		)
-		.catch (error => { console.log(error.name, error.message); })
+		.catch (error => { console.log(error); })
 		.finally (()=>{
 			const loading_bar_html = document.getElementById('loading_bar');
 			loading_bar_html.innerHTML = '';

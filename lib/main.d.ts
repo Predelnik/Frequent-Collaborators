@@ -1,8 +1,10 @@
 declare const api_key = "7a92a35fa5474d448234162762968104";
 declare const base_uri = "https://api.themoviedb.org/3/";
 declare function report_error(error_str: string): void;
-declare function sleep(ms: any): Promise<{}>;
-declare function execute(request_url: string, args: any, additional_data?: any, retry_count?: number): Promise<{}>;
+declare function sleep(ms: number): Promise<{}>;
+declare class ApiLimitReached extends Error {
+}
+declare function execute(request_url: string, args: any, additional_data?: any, retry_count?: number): any;
 declare class ActorDescription {
     readonly id: number;
     readonly name: string;

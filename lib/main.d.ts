@@ -24,9 +24,16 @@ declare class IdObjectSet<T extends IdObjectDescription> {
     descriptions: T[];
     add(description: T): void;
     size(): number;
+    remove(id: number): void;
 }
 declare class MovieSet extends IdObjectSet<MovieDescription> {
 }
 declare class ActorSet extends IdObjectSet<ActorDescription> {
 }
+declare var current_movie_set: MovieSet;
+declare var current_actor_set: ActorSet;
+declare var raw_results: Array<any>;
+declare function clear_table(): void;
+declare function rebuild_table(): void;
+declare function remove_movie(id: number): void;
 declare function check_director(): void;

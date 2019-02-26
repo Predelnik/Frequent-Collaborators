@@ -8,11 +8,6 @@
          <p>Director Name: <input id="director_name_input"></input><button onclick="check_director()" style="margin-left:1em">Generate</button></p>
          <details>
             <summary>Options</summary>
-            <form>
-            <div class="input-div">
-                <label>Number of collaborators to show:</label>
-                <input id="top_n_edit" value="10" type="number" class="long-control"></input>
-            </div>
             <div class="input-div">
                 <label>Language:</label>
                 <select id="language_select" class="long-control">
@@ -90,10 +85,18 @@
                   <option value="XH">Xhosa</option>
                </select>
             </div>
+            <fieldset>
+            <legend>View Options</legend>
+            <form onSubmit="return false;">
             <div class="input-div">
-                <input id="exclude_cameos_checkbox" type="checkbox" checked>Exclude Cameos</input>
+                <label>Number of collaborators to show:</label>
+                <input id="top_n_edit" value="10" type="number" class="long-control" onchange="rebuild_table()"></input>
+            </div>
+            <div class="input-div">
+                <input id="exclude_cameos_checkbox" type="checkbox" onchange="rebuild_table()" checked>Exclude Cameos</input>
             </div>
             </form>
+            </fieldset>
         </details>
          <p id="director_name" class="header"></p>
          <p id="loading_bar"></p>

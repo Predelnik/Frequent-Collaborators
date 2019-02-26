@@ -123,14 +123,16 @@ function rebuild_table() {
 	current_actor_set.descriptions.sort ((lhs, rhs : ActorDescription) => cast_id_to_movie_descriptions[rhs.id].descriptions.length - cast_id_to_movie_descriptions[lhs.id].descriptions.length);
 	current_movie_set.descriptions.sort ((lhs, rhs : MovieDescription) => lhs.release_date < rhs.release_date ? -1 : 1);
 
-	let table_html : string = "<tr><th class=\"table-vertical-header\"></th>" + current_movie_set.descriptions.map ((description : MovieDescription) => '<th>' + description.name 
+	let table_html : string = '<tr><th width="35	px">#</th><th class=\"table-vertical-header\"></th>' + current_movie_set.descriptions.map ((description : MovieDescription) => '<th>' + description.name 
 		+ '<img class="close-button" title="Remove Movie as Irrelevant" src="img/delete.svg" onclick=remove_movie(' + description.id + ')></img></th>').join("") + "<th>Total</th></tr>";
 	const top_n_to_show = (document.getElementById ('top_n_edit') as HTMLInputElement).valueAsNumber;
 	const actor_count = Math.min (top_n_to_show, current_actor_set.descriptions.length);
 	for (let i = 0; i < actor_count; ++i) {
 		const actor_description = current_actor_set.descriptions[i];
 		table_html += "<tr>";
-		table_html += "<td class=\"table-vertical-header\">" + actor_description.name + "</td>";
+		table_html += '<td>';
+		table_html += i + 1;
+		table_html += "</td><td class=\"table-vertical-header\">" + actor_description.name + "</td>";
 		for (const movie_description of current_movie_set.descriptions)
 		{
 			table_html += "<td>";

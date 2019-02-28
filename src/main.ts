@@ -95,7 +95,17 @@ function clear_table() {
 	output_table_html.innerHTML = '';
 }
 
-function rebuild_table() {
+function update_clipboard(new_data : string) {
+  const navigator : any = window.navigator;
+  navigator.clipboard.writeText(new_data).then(function() {
+    console.log ('Clipboard copy succeeded');
+  }, function() {
+    console.log ('Clipboard copy failed');
+  });
+}
+
+function generate_cast_id_to_movie_description ()
+{
 	const cast_id_to_movie_descriptions : { [key:number]:MovieSet; } = {};
 	const exclude_cameos = (document.getElementById ('exclude_cameos_checkbox') as HTMLInputElement).checked;
 			for (const result of raw_results) {
@@ -119,11 +129,69 @@ function rebuild_table() {
 					actor_movie_set.add (movie_description);
 				}
 			}
+	return cast_id_to_movie_descriptions;
+}
 
+function sort_actor_set (cast_id_to_movie_descriptions : { [key:number]:MovieSet; })
+{
 	current_actor_set.descriptions.sort ((lhs, rhs : ActorDescription) => cast_id_to_movie_descriptions[rhs.id].descriptions.length - cast_id_to_movie_descriptions[lhs.id].descriptions.length);
-	current_movie_set.descriptions.sort ((lhs, rhs : MovieDescription) => lhs.release_date < rhs.release_date ? -1 : 1);
+}
 
-	let table_html : string = '<tr><th width="35	px">#</th><th class=\"table-vertical-header\"></th>' + current_movie_set.descriptions.map ((description : MovieDescription) => '<th>' + description.name 
+function copy_to_clipboard_as_html ()
+{
+	const cast_id_to_movie_descriptions = generate_cast_id_to_movie_description ();
+	sort_actor_set (cast_id_to_movie_descriptions);
+	let table_html : string = '<table><tr><th>#</th><th></th>' + current_movie_set.descriptions.map ((description : MovieDescription) => '<th>' + description.name + '</th>').join ('')
+		+ "<th>Total</th></tr>";
+	const top_n_to_show = (document.getElementById ('top_n_edit') as HTMLInputElement).valueAsNumber;
+	const actor_count = Math.min (top_n_to_show, current_actor_set.descriptions.length);
+	for (let i = 0; i < actor_count; ++i) {
+		const actor_description = current_actor_set.descriptions[i];
+		table_html += "<tr>";
+		table_html += '<td>';
+		table_html += i + 1;
+		table_html += "</td><td>" + actor_description.name + "</td>";
+		for (const movie_description of current_movie_set.descriptions)
+		{
+			table_html += "<td>";
+			if (cast_id_to_movie_descriptions[actor_description.id].id_set.has (movie_description.id))
+				table_html += "&#10003;";
+			table_html += "</td>";
+		}
+		table_html += "<td>" + cast_id_to_movie_descriptions[actor_description.id].size ()+ "</td>";
+		table_html += "</tr>";
+	}
+	table_html += '</table>';
+	update_clipboard (table_html);
+}
+
+function copy_to_clipboard_as_tsv ()
+{
+	const cast_id_to_movie_descriptions = generate_cast_id_to_movie_description ();
+	sort_actor_set (cast_id_to_movie_descriptions);
+	let table_tsv : string = '#\t' + current_movie_set.descriptions.map ((description : MovieDescription) => description.name).join ('\t')
+		+ "\tTotal\n";
+	const top_n_to_show = (document.getElementById ('top_n_edit') as HTMLInputElement).valueAsNumber;
+	const actor_count = Math.min (top_n_to_show, current_actor_set.descriptions.length);
+	for (let i = 0; i < actor_count; ++i) {
+		const actor_description = current_actor_set.descriptions[i];
+		table_tsv += i + 1;
+		table_tsv += '\t' + actor_description.name;
+		for (const movie_description of current_movie_set.descriptions) {
+			table_tsv += '\t';
+			if (cast_id_to_movie_descriptions[actor_description.id].id_set.has (movie_description.id))
+				table_tsv += "Yes";
+		}
+		table_tsv += cast_id_to_movie_descriptions[actor_description.id].size ();
+		table_tsv += "\n";
+	}
+	update_clipboard (table_tsv);
+}
+
+function rebuild_table() {
+	const cast_id_to_movie_descriptions = generate_cast_id_to_movie_description ();
+	sort_actor_set (cast_id_to_movie_descriptions);
+	let table_html : string = '<tr><th width="35 px">#</th><th class=\"table-vertical-header\"></th>' + current_movie_set.descriptions.map ((description : MovieDescription) => '<th>' + description.name 
 		+ '<img class="close-button" title="Remove Movie as Irrelevant" src="img/delete.svg" onclick=remove_movie(' + description.id + ')></img></th>').join("") + "<th>Total</th></tr>";
 	const top_n_to_show = (document.getElementById ('top_n_edit') as HTMLInputElement).valueAsNumber;
 	const actor_count = Math.min (top_n_to_show, current_actor_set.descriptions.length);
@@ -192,7 +260,7 @@ function check_director() {
 					current_movie_set.add (movie_description);
 				}
 			}
-			
+			current_movie_set.descriptions.sort ((lhs, rhs : MovieDescription) => lhs.release_date < rhs.release_date ? -1 : 1);
 			rebuild_table ();
 		}
 		)

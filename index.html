@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
-    <head><title>TypeScript Test</title>
+    <head><title>Frequent Collaborators</title>
         <link href="index.css" rel="stylesheet" type="text/css" media="all">
         <script src="lib/main.js"></script>
     </head>
     <body>
+         <span id="title">Frequent Collaborators Table</span><a href="https://themoviedb.org" target="_blank"><img src="img/tmdb-logo.svg" id="tmdb-logo"></img></a>
          <p>Director Name: <input id="director_name_input"></input><button onclick="check_director()" style="margin-left:1em">Generate</button></p>
          <details>
             <summary>Options</summary>
@@ -85,6 +86,7 @@
                   <option value="XH">Xhosa</option>
                </select>
             </div>
+            <div class="input-div">
             <fieldset>
             <legend>View Options</legend>
             <form onSubmit="return false;">
@@ -97,6 +99,11 @@
             </div>
             </form>
             </fieldset>
+            </div>
+            <div class="input-div">
+              <button id="copy_as_html_button" onclick="copy_to_clipboard_as_html()">Copy as HTML</button>
+              <button id="copy_as_tsv_button" onclick="copy_to_clipboard_as_tsv()">Copy as tsv</button>
+            </div>
         </details>
          <p id="director_name" class="header"></p>
          <p id="loading_bar"></p>

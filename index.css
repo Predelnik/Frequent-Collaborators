@@ -31,6 +31,23 @@ label
     width: 250px;
 }
 
+fieldset
+{
+    display: inline-block;
+}
+
+#tmdb-logo
+{
+    height: 50px;
+    margin-left: 15px;
+}
+
+#title
+{
+    font-size: 36px;
+    font-weight: bold;
+}
+
 .long-control
 {
     width: 250px;

@@ -34,6 +34,15 @@ declare var current_movie_set: MovieSet;
 declare var current_actor_set: ActorSet;
 declare var raw_results: Array<any>;
 declare function clear_table(): void;
+declare function update_clipboard(new_data: string): void;
+declare function generate_cast_id_to_movie_description(): {
+    [key: number]: MovieSet;
+};
+declare function sort_actor_set(cast_id_to_movie_descriptions: {
+    [key: number]: MovieSet;
+}): void;
+declare function copy_to_clipboard_as_html(): void;
+declare function copy_to_clipboard_as_tsv(): void;
 declare function rebuild_table(): void;
 declare function remove_movie(id: number): void;
 declare function check_director(): void;

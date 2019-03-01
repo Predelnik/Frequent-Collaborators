@@ -5,10 +5,10 @@ module.exports = function(grunt) {
           base: 'dist'
         },
         src: ['**']
-      }
-      ts: {
+      },
+      'ts': {
           default : {
-              src: ["**/*.ts", "!node_modules/**/*.ts"]
+              'tsconfig' : "tsconfig.json"
           }
       }
   });

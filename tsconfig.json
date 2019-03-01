@@ -10,11 +10,12 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "removeComments": true,
+        "rootDir": "src/"
     },
     "files": [
         "src/main.ts"
     ],
     "exclude": [
-    "node_modules",
+    "node_modules"
   ]
 }

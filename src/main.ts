@@ -1,4 +1,4 @@
-const api_key = "";
+const api_key = "714fbde28c0c3d339f7e61d017567b76";
 const base_uri = "https://api.themoviedb.org/3/";
 
 function report_error(error_str: string) {

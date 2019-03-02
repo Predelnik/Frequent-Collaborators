@@ -1,4 +1,4 @@
-declare const api_key = "7a92a35fa5474d448234162762968104";
+declare const api_key = "714fbde28c0c3d339f7e61d017567b76";
 declare const base_uri = "https://api.themoviedb.org/3/";
 declare function report_error(error_str: string): void;
 declare function sleep(ms: number): Promise<{}>;
